@@ -1,0 +1,9 @@
+oviedo
+o&iedo true
+o&edo true
+o&do false
+o&o false
+o& false
+* true
+*& true
+&&& true
