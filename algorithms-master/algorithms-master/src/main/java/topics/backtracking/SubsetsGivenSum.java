@@ -39,7 +39,7 @@ public class SubsetsGivenSum {
 	/**
 	 * An example: the first n natural numbers
 	 */
-	public void assumption1() {
+	public void assumption1() { // Create vector numbers
 		for (int i = 0; i < n; i++)
 			v[i] = i + 1;
 	}
@@ -47,7 +47,7 @@ public class SubsetsGivenSum {
 	/**
 	 * Another example: the first square numbers
 	 */
-	public void assumption2() {
+	public void assumption2() { // Create vector numbers
 		for (int i = 0; i < n; i++)
 			v[i] = (i + 1) * (i + 1);
 	}
@@ -58,13 +58,14 @@ public class SubsetsGivenSum {
 	 * @param level Level in the tree of states starting at 0
 	 */
 	public void backtracking(int level) {
-		if (level == n) { // There is already a subset to be analyzed
-			if (sum == c) { // If meets the requirement (the final value c)
+		if (level == n) { // There is already a subset to be analyzed -> Reached last level
+			if (sum == c) { // If meets the requirement (the final value c) -> Check if it's a correct
+							// solution
 				counter++; // Then we have a new solution
 				log.debug("SUBSET SUMS " + c + "=");
 				StringBuilder sb = new StringBuilder();
 				for (int k = 0; k < n; k++)
-					if (mark[k]) // All marked numbers are part of the subset
+					if (mark[k]) // All marked numbers are part of the subset -> Show just marked numbers
 						sb.append(v[k] + "+");
 				log.debug(sb.toString());
 			}
@@ -72,12 +73,14 @@ public class SubsetsGivenSum {
 			// With j=1 the element does not belong to the solution; with j=0 we consider
 			// the element
 			// as part of the solution (there are two different possibilities)
-			for (int j = 0; j <= 1; j++) {
-				if (j == 0) {
+			for (int j = 0; j <= 1; j++) { // 2 options
+				if (j == 0) { // Pick the number to the sum
 					sum = sum + v[level];
 					mark[level] = true;
 				}
-				backtracking(level + 1);
+				backtracking(level + 1); // Backtracking with or without the number
+
+				// Undo the changes, if the number has been picked:
 				if (j == 0) { // Unmark the marked after the backtracking process
 					sum = sum - v[level];
 					mark[level] = false;

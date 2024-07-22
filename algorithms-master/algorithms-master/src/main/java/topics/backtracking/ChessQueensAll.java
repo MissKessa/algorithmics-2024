@@ -39,7 +39,7 @@ public class ChessQueensAll {
 	 */
 	public void backtracking(int j) {
 		if (j == n) { // We have already placed the n queens
-			count++;
+			count++; // Solution found
 			log.debug("SOLUTION FOUND NUMBER " + count);
 			StringBuilder sb = new StringBuilder();
 			for (int k = 0; k < n; k++)
@@ -47,7 +47,7 @@ public class ChessQueensAll {
 			log.debug(sb.toString());
 		} else
 			for (int i = 0; i < n; i++)
-				if (!a[i] && !b[i + j] && !c[i - j + n - 1]) {
+				if (!a[i] && !b[i + j] && !c[i - j + n - 1]) { // we don't stop if we found a solution
 					sol[j] = i; // There is a queen in column j and row i
 					a[i] = true; // Row used
 					b[i + j] = true; // Diagonal i+j used

@@ -36,7 +36,7 @@ class Game extends Node {
 		this.pieces = pieces;
 	}
 
-	public Game(int[][] board, List<Piece> pieces, int depth, UUID parentID) {
+	public Game(int[][] board, List<Piece> pieces, int depth, UUID parentID) { // for children
 		this.board = board;
 		this.pieces = pieces;
 		this.depth = depth;
@@ -47,12 +47,15 @@ class Game extends Node {
 	private ArrayList<Object> placeNewPiece() {
 		ArrayList<Object> boards = new ArrayList<Object>();
 
+		// For each position in the board (i,j)
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board.length; j++) {
+				// Try to put the piece horizontal
 				int[][] newBoard = tryPositionNewPiece(i, j, PieceOrientation.Horizontal);
 				if (newBoard != null)
 					boards.add(newBoard);
 
+				// Try to put the piece vertical
 				newBoard = tryPositionNewPiece(i, j, PieceOrientation.Vertical);
 				if (newBoard != null)
 					boards.add(newBoard);
@@ -62,12 +65,13 @@ class Game extends Node {
 	}
 
 	private int[][] tryPositionNewPiece(int x, int y, PieceOrientation orientation) {
+		// Copy board:
 		int[][] newBoard = new int[board.length][board.length];
 		for (int i = 0; i < board.length; i++)
 			for (int j = 0; j < board.length; j++)
 				newBoard[i][j] = board[i][j]; // Copy the board in a new board for new nodes
 
-		if (insertNewPiece(x, y, orientation, newBoard, pieces.get(getDepth())))
+		if (insertNewPiece(x, y, orientation, newBoard, pieces.get(getDepth()))) // Add piece
 			return newBoard;
 		else
 			return null; // If we return null, then it is not a valid node
@@ -78,6 +82,8 @@ class Game extends Node {
 
 		int limitX = 0;
 		int limitY = 0;
+
+		// Set orientation:
 		if (orientation == PieceOrientation.Horizontal) { // The default orientation
 			limitX = piece.x;
 			limitY = piece.y;
@@ -88,13 +94,13 @@ class Game extends Node {
 		}
 
 		// Check the size of the board
-		if ((x + limitX > newBoard.length) || (y + limitY > newBoard.length))
+		if ((x + limitX > newBoard.length) || (y + limitY > newBoard.length)) // the piece doesn't fit
 			return false;
 
 		// Check if the piece is on another piece
 		for (int i = x; i < x + limitX; i++) {
 			for (int j = y; j < y + limitY; j++) {
-				if (newBoard[i][j] != 0)
+				if (newBoard[i][j] != 0) // there's already a piece
 					return false;
 			}
 		}
@@ -104,19 +110,19 @@ class Game extends Node {
 			result = true; // The first element does not need a neighbor
 		else { // If it is not the first element
 			if (x + limitX < newBoard.length) // On the button
-				for (int k = y; k < y + limitY; k++)
+				for (int k = y; k < y + limitY; k++) // right
 					if (newBoard[x + limitX][k] != 0)
 						result = true; // We have a neighbor
 			if (x != 0) // On the top
-				for (int k = y; k < y + limitY; k++)
+				for (int k = y; k < y + limitY; k++) // left
 					if (newBoard[x - 1][k] != 0)
 						result = true; // We have a neighbor
 			if (y != 0) // On the left
-				for (int k = x; k < x + limitX; k++)
+				for (int k = x; k < x + limitX; k++) // up
 					if (newBoard[k][y - 1] != 0)
 						result = true; // We have a neighbor
 			if (y + limitY < newBoard.length) // On the right
-				for (int k = x; k < x + limitX; k++)
+				for (int k = x; k < x + limitX; k++) // down
 					if (newBoard[k][y + limitY] != 0)
 						result = true; // We have a neighbor
 		}
@@ -151,7 +157,7 @@ class Game extends Node {
 		int lastValueY = -1;
 		for (int i = 0; i < board.length; i++) {
 			for (int j = 0; j < board.length; j++) {
-				if ((firstValueY == -1) && (board[i][j] != 0)) {
+				if ((firstValueY == -1) && (board[i][j] != 0)) { // Start where we put Y a piece
 					firstValueY = i;
 				}
 				if (board[i][j] != 0) {
@@ -187,6 +193,7 @@ class Game extends Node {
 		// Possible positions for a new piece placed on the board
 		boards = placeNewPiece(); // We could place the new piece in different locations, so for each location we
 									// have a new state
+		// Children for all placements
 		for (Object board : boards) {
 			testBoard = (int[][]) board;
 			temp = new Game(testBoard, pieces, depth + 1, this.getID()); // parentID = UUID of the previous node
@@ -197,6 +204,7 @@ class Game extends Node {
 
 	@Override
 	public boolean isSolution() {
+		// Placed all pieces
 		return (depth == pieces.size()) ? true : false; // We have a solution only when all the pieces are placed
 	}
 

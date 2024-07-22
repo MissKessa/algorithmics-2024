@@ -43,6 +43,7 @@ class Table extends Node {
 		this.n = n;
 		this.c = c;
 
+		// PRINT COSTS MATRIX:
 		log.debug("COSTS MATRIX");
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < n; i++) {
@@ -59,28 +60,39 @@ class Table extends Node {
 		taskWithWorker = new boolean[n];
 	}
 
-	public Table(Table parent, int j) { // To create a state from the parent
+	public Table(Table parent, int j) { // To create a state from the parent when we expead it to create chuldren
 		super();
 
+		// The cost and the size is the same:
 		n = parent.n;
 		c = parent.c;
+
+		// Partial solution and marked tasks are also the same
 		partialSolution = parent.partialSolution.clone();
 		taskWithWorker = parent.taskWithWorker.clone();
+
+		// Depth/level is also the same:
 		depth = parent.depth;
 		parentID = parent.getID();
+
+		// Mark task:
 		partialSolution[depth] = j; // Depth corresponds to the first agent that is not assigned
 		taskWithWorker[j] = true; // We mark the task as assigned
 		depth++;
+
+		// Calculate new heuristic for child:
 		calculateHeuristicValue();
 
 		if (depth == n - 1) { // Join the last two levels of the tree of states
-								// (if there are only one more task to be assigned)
+								// (if there are only one more task to be assigned) -> at last level there is
+								// only one task free for last worker
 			int taskToBeAssigned = -1;
 
 			for (int k = 0; k < n; k++) // Look for the last task to be assigned
 				if (!taskWithWorker[k])
 					taskToBeAssigned = k;
 
+			// Assign last task:
 			partialSolution[depth] = taskToBeAssigned;// Depth corresponds to the first agent that is not assigned
 			taskWithWorker[taskToBeAssigned] = true; // We mark the task as assigned
 			depth++; // At this point depth == n
@@ -133,7 +145,7 @@ class Table extends Node {
 				heuristicValue += minimumColumn(j);
 	}
 
-	private int minimumColumn(int j) {
+	private int minimumColumn(int j) { // Searchs for minimum value at the given column
 		int minValueColumn = Integer.MAX_VALUE;
 		for (int i = depth; i < n; i++)
 			// Calculate the minimum of the column
@@ -161,7 +173,7 @@ class Table extends Node {
 
 	@Override
 	public boolean isSolution() {
-		if (depth == n)
+		if (depth == n) // reach last level
 			return true;
 		else
 			return false;
